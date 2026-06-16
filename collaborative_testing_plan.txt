@@ -1,0 +1,109 @@
+E-VUZE COLLABORATIVE TESTING PLAN (PHARMACY PHASE)
+
+======================================================================
+1. SUMMARY
+======================================================================
+This document outlines the strategy, schedule, team roles, and testing steps for the collective platform testing session scheduled for tomorrow. 
+
+The session focuses strictly on desktop layouts and functionalities for the Pharmacy Phase (Pharmacy Owner, Branch Manager, Pharmacist, and Cashier portals) using the main branch. 
+
+======================================================================
+2. SESSION LOGISTICS & TIMELINE
+======================================================================
+- Kick-off Time: Tomorrow at 10:30 AM
+- Formats: Remote (Sync Video Kick-off and Tracker Team Channels)
+
+TIMELINE:
+* 10:30 AM - 10:45 AM: Kick-off Meeting
+  - Align on targets, verify logins, and share developer Ngrok URLs.
+* 10:45 AM - 11:30 AM: Scenario Run 1
+  - Onboarding, Signup, Map Selection, and Superadmin Approvals.
+* 11:30 AM - 12:15 PM: Scenario Run 2
+  - POS Cashier Transactions, Stock Inventory, and Drug Transfers.
+* 12:15 PM - 01:15 PM: Lunch Break (As required)
+* 01:15 PM - 02:00 PM: Scenario Run 3
+  - Concurrency/Stress Testing & Issue Triage.
+
+======================================================================
+3. TWIN-TRACK SETUP (HOSTED VS. LOCAL DEV)
+======================================================================
+To support all team members (technical and non-technical), testing will run on two parallel tracks:
+
+TRACK 1: HOSTED TESTING (For UI/UX, Copywriters, and Coordinators)
+- Target Environment: Access the live URL (https://evuze.ubwengelab.rw) pointing to the Render production database.
+- Backend Log Tracking: One designated backend developer will monitor the Render Live Logs tab. Any crashes or errors will be logged in real-time.
+
+TRACK 2: LOCAL/NGROK TESTING (For Developers & Team Leads)
+- Target Environment: Access the local runner (http://localhost:3000) connected to a local backend via Ngrok to inspect live database changes.
+- Backend Log Tracking: Backend developers run "ngrok http 4000" and share their forwarding URL with the frontend developers. Frontend developers update their local .env file.
+
+======================================================================
+4. COMMUNICATION & BUG REPORTING (TRACKER GROUPS)
+======================================================================
+Instead of using WhatsApp, team leaders will set up three channel groups on the Tracker platform:
+- [Tracker] UI/UX Testing Group
+- [Tracker] Frontend Testing Group
+- [Tracker] Backend Testing Group
+
+Testers will report all issues in these group chats using the following template. The coordinator will search for the "#BUG" hashtag in these channels to build the master report.
+
+BUG REPORT TEMPLATE:
+--------------------
+#BUG
+- Environment: [Hosted / Local Ngrok]
+- Portal: [Owner / Manager / Pharmacist / Cashier]
+- Page/URL: /pharmacy/inventory
+- Description: Cashier checkout button remains disabled after selecting payment method.
+- Steps to Reproduce:
+  1. Click 'Walk-in Order'
+  2. Select 'Cash' payment
+  3. Enter 5000 RWF
+  4. 'Pay' button remains unclickable
+- Device/Browser: Desktop (Chrome / Safari)
+[Attach screenshot or screen recording link]
+
+======================================================================
+5. STEP-BY-STEP SCENARIOS (PHARMACY PHASE - DESKTOP ONLY)
+======================================================================
+All testers will follow these scenarios sequentially to audit system status:
+
+SCENARIO 1: ONBOARDING & SUPERADMIN APPROVAL
+1. Pharmacy Owner Signup: A tester registers a new Pharmacy Owner, fills out brand info, and adds a physical branch (selecting coordinates on the Leaflet map).
+2. Superadmin Verification: The Superadmin logs in, opens the branch review dashboard, verifies the coordinates on the review map, and approves the submission.
+3. Status Check: The Owner receives the status update email (via Resend) and gains dashboard access.
+
+SCENARIO 2: STAFF & INVENTORY MANAGEMENT
+1. Branch Setup: The Branch Manager logs in and creates accounts for a Pharmacist and a Cashier.
+2. Staff Verification: Pharmacist and Cashier log in with their temporary credentials and change their passwords.
+3. Inventory Count: Staff audits active drug quantities.
+4. Drug Transfer: The Manager requests a drug stock transfer from a sister branch. The sister branch manager accepts/rejects the transfer (verifying inventory decreases/increases in both databases).
+
+SCENARIO 3: POS CASHIERING & CHECKOUT (DESKTOP ONLY)
+1. Cashier Login: The Cashier opens the POS dashboard.
+2. Order Placement: Cashier starts a walk-in transaction, selects drugs, and reviews checkout pricing.
+3. Payment Methods:
+   - CASH: Cashier enters amount received; the interface must calculate correct change.
+   - CARD: Select card mock payment.
+   - INSURANCE: Cashier enters patient insurance type (RSSB, MMI, etc.); the system must automatically apply correct copay/deductible coverage.
+4. Fulfillment: Cashier completes order, downloads receipt PDF, and prints prescription sheet.
+
+SCENARIO 4: CONCURRENCY CHECK (10-MINUTE RUSH)
+* At exactly 01:45 PM, all testers (across both Hosted and Local tracks) will log in as Cashiers and process POS transactions simultaneously. The backend team will monitor logs (both locally and on Render) to verify database transactions complete successfully without deadlock errors.
+
+======================================================================
+6. NGORK DEVELOPMENT SETUP (FOR DEVELOPERS ONLY)
+======================================================================
+To connect the local frontend and local backend across remote machines:
+
+FOR BACKEND DEVELOPERS:
+1. Pull the backend branch "ft-ngrok-cors-fix" (or merge it into main).
+2. Run your local backend: "npm run start:dev" on port 4000.
+3. Open a separate terminal and run: "ngrok http 4000".
+4. Copy the generated "https://xxxx.ngrok-free.app" URL and share it with the frontend team.
+
+FOR FRONTEND DEVELOPERS:
+1. Pull the frontend main branch.
+2. Open your local "pharmacy_front/.env" file and set:
+   NEXT_PUBLIC_API_URL=https://xxxx.ngrok-free.app/api
+3. Restart your frontend server: "npm run dev".
+4. Open the ngrok link once in your browser and click "Visit Site" to bypass the warning.
