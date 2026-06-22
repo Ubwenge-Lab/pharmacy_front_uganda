@@ -1,14 +1,11 @@
 // frontend/src/app/layout.tsx - Root Layout
 
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/context/AuthContext';
 import { CartProvider } from '@/context/CartContext';
 import { Toaster } from 'react-hot-toast';
 import I18nProvider from '@/components/providers/I18nProvider';
-
-const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'E-Vuze Pharmacy - Healthcare at Your Fingertips',
@@ -22,7 +19,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-    <body className={inter.className}>
+    <body className="font-sans font-normal antialiased">
       <I18nProvider>
         <AuthProvider>
           <CartProvider>
