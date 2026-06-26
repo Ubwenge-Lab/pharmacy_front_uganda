@@ -4,7 +4,8 @@ import { usePathname } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { 
   Squares2X2Icon, UsersIcon, ClockIcon, ChartBarIcon, CubeIcon, 
-  ArrowsRightLeftIcon, MapIcon, LockClosedIcon, XMarkIcon, ArrowRightOnRectangleIcon 
+  ArrowsRightLeftIcon, MapIcon, LockClosedIcon, XMarkIcon, ArrowRightOnRectangleIcon,
+  ShoppingCartIcon, DocumentArrowUpIcon
 } from '@heroicons/react/24/outline';
 import { useAuth } from '@/context/AuthContext';
 
@@ -28,6 +29,8 @@ export default function BranchSidebar({ open = false, onClose }: BranchSidebarPr
     { href: '/branch/transfers',       icon: ArrowsRightLeftIcon, label: t('branch.transfers') },
     { href: '/branch/map',             icon: MapIcon,            label: t('extras.branch.networkMapTitle') },
     { href: '/branch/change-password', icon: LockClosedIcon,     label: t('branch.changePassword') },
+    { href: '/branch/pos',                 icon: ShoppingCartIcon,    label: 'POS Sale' },
+    { href: '/branch/prescription-upload', icon: DocumentArrowUpIcon, label: 'Upload Rx' },
   ];
 
   const isActive = (href: string) => pathname === href || pathname.startsWith(href + '/');
