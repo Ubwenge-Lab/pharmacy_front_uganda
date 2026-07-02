@@ -1485,6 +1485,7 @@ export const en = {
     pharmacist: 'Pharmacist',
     cashier: 'Cashier',
     nurse: 'Nurse',
+    superAdministrator: 'Super Administrator',
   },
   staffPages: {
     performanceMetrics: "Your performance metrics are looking good. Here's an overview of your operations.",

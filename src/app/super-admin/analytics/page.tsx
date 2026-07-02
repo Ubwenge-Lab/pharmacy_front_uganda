@@ -115,26 +115,22 @@ export default function SuperAdminAnalyticsPage() {
   const monthlyData  = buildMonthlyRevenue(totalRev);
   const weeklyData   = buildWeeklyAvg(totalRev, totalOrders);
 
-  // General Insights bar data (% of max)
-  const pharMax    = Math.max(analytics?.totalPharmacies ?? 0, 1);
-  const patMax     = Math.max(analytics?.totalPatients   ?? 0, 1);
-  const branchMax  = Math.max(analytics?.totalBranches   ?? 0, 1);
-  const maxAll     = Math.max(pharMax, patMax, branchMax, 1);
+  // General Insights bar data (Raw numbers)
   const insightsData = [
-    { name: 'Pharmacy Insights', value: Math.round((pharMax   / maxAll) * 80) },
-    { name: 'Patient Insights',  value: Math.round((patMax    / maxAll) * 80) },
-    { name: 'Branch Insights',   value: Math.round((branchMax / maxAll) * 80) },
+    { name: 'Pharmacies', value: analytics?.totalPharmacies ?? 0 },
+    { name: 'Patients',   value: analytics?.totalPatients   ?? 0 },
+    { name: 'Branches',   value: analytics?.totalBranches   ?? 0 },
   ];
 
   // Total Transactions donut
   const completed  = analytics?.completedOrders ?? 0;
-  const pending    = (analytics?.totalOrders ?? 0) - (analytics?.completedOrders ?? 0);
-  const platformPh = analytics?.totalPharmacies ?? 0;
-  const donutTotal = completed + pending + platformPh || 1;
-  const donutData  = [
-    { name: 'Branch',   value: Math.round((completed  / donutTotal) * 100) || 30, color: '#1E3A5F' },
-    { name: 'Patient',  value: Math.round((pending     / donutTotal) * 100) || 50, color: '#38BDF8' },
-    { name: 'Pharmacy', value: Math.round((platformPh  / donutTotal) * 100) || 20, color: '#0284C7' },
+  const pending    = (analytics?.totalOrders ?? 0) - completed;
+  
+  const donutData = (analytics?.totalOrders ?? 0) === 0 ? [
+    { name: 'No Orders', value: 1, color: '#e5e7eb' }
+  ] : [
+    { name: 'Completed', value: completed, color: '#1E3A5F' },
+    { name: 'Pending',   value: pending, color: '#38BDF8' },
   ];
 
   // Stat cards
@@ -274,9 +270,7 @@ export default function SuperAdminAnalyticsPage() {
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" horizontal={false} />
               <XAxis
                 type="number"
-                domain={[0, 80]}
                 tick={{ fontSize: 11, fill: '#9ca3af' }}
-                tickFormatter={v => `${v}%`}
                 axisLine={false}
                 tickLine={false}
               />
@@ -289,7 +283,6 @@ export default function SuperAdminAnalyticsPage() {
                 tickLine={false}
               />
               <Tooltip
-                formatter={(v: any) => `${v}%`}
                 contentStyle={{ borderRadius: 12, border: '1px solid #f0f0f0', fontSize: 12 }}
               />
               <Bar dataKey="value" radius={[0, 6, 6, 0]}>
@@ -329,7 +322,6 @@ export default function SuperAdminAnalyticsPage() {
                 ))}
               </Pie>
               <Tooltip
-                formatter={(v: any) => `${v}%`}
                 contentStyle={{ borderRadius: 12, border: '1px solid #f0f0f0', fontSize: 12 }}
               />
             </PieChart>

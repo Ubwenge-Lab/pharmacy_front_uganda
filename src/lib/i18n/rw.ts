@@ -1482,9 +1482,10 @@ export const rw = {
   },
   roles: {
     staff: 'Umukozi',
-    pharmacist: 'Umuganga w\'Imiti',
-    cashier: 'Kasiye',
-    nurse: 'Infirmiye',
+    pharmacist: 'Faramasiye',
+    cashier: 'Ushinzwe amafaranga',
+    nurse: 'Umuforomo',
+    superAdministrator: 'Super Administrator',
   },
   staffPages: {
     performanceMetrics: "Ibipimo by'ibikorwa byawe ni byiza. Hari incamake y'ibikorwa byawe.",

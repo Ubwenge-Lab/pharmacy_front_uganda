@@ -1485,6 +1485,7 @@ export const fr = {
     pharmacist: 'Pharmacien',
     cashier: 'Caissier',
     nurse: 'Infirmier',
+    superAdministrator: 'Super Administrateur',
   },
   staffPages: {
     performanceMetrics: "Vos indicateurs de performance sont bons. Voici un aperçu de vos opérations.",

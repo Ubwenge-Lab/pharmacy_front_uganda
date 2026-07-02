@@ -1,12 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { XMarkIcon, ChatBubbleOvalLeftEllipsisIcon, PhoneIcon, DocumentTextIcon, ChevronRightIcon, LockClosedIcon } from '@heroicons/react/24/outline';
 import { useAuth } from '@/context/AuthContext';
 import api from '@/lib/api';
 import { getErrorMessage } from '@/lib/errorHandler';
-import { SUPPORT_EMAIL } from '@/lib/constants';
+import { SUPPORT_EMAIL as DEFAULT_SUPPORT_EMAIL } from '@/lib/constants';
 
 interface SupportBotProps {
   open?: boolean;
@@ -36,10 +36,29 @@ export default function SupportBot({ open: openProp, onOpen, onClose }: SupportB
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [ticketRef, setTicketRef]       = useState<string | null>(null);
   const [error, setError]               = useState<string | null>(null);
+  
+  const [supportEmail, setSupportEmail] = useState(DEFAULT_SUPPORT_EMAIL);
+  const [supportPhone, setSupportPhone] = useState<string | null>(null);
 
   const isOpen      = openProp !== undefined ? openProp : internalOpen;
   const handleOpen  = onOpen  ?? (() => setInternalOpen(true));
   const handleClose = onClose ?? (() => setInternalOpen(false));
+
+  // Fetch dynamic settings when the bot opens
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const { data } = await api.get('/support/tickets/settings');
+        if (data) {
+          if (data.supportEmail) setSupportEmail(data.supportEmail);
+          if (data.supportPhone) setSupportPhone(data.supportPhone);
+        }
+      } catch (e) {
+        console.error('Failed to load support settings', e);
+      }
+    };
+    fetchSettings();
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -125,7 +144,7 @@ export default function SupportBot({ open: openProp, onOpen, onClose }: SupportB
                 {/* Info rows */}
                 <div className="px-6 pt-4 pb-2 space-y-1">
                   <a
-                    href={`mailto:${SUPPORT_EMAIL}`}
+                    href={`mailto:${supportEmail}`}
                     className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors group"
                   >
                     <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 bg-brand-teal-light">
@@ -133,7 +152,10 @@ export default function SupportBot({ open: openProp, onOpen, onClose }: SupportB
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-semibold text-gray-800">{t('supportBot.callOrEmail')}</p>
-                      <p className="text-xs text-gray-400 truncate">{SUPPORT_EMAIL}</p>
+                      <p className="text-xs text-gray-400 truncate">{supportEmail}</p>
+                      {supportPhone && (
+                        <p className="text-xs text-gray-400 truncate mt-0.5">{supportPhone}</p>
+                      )}
                     </div>
                     <ChevronRightIcon className="w-4 h-4 text-gray-300 group-hover:text-gray-400 transition-colors" />
                   </a>
