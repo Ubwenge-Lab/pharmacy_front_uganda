@@ -1481,11 +1481,11 @@ export const lg = {
     paymentsNav: 'Okusasula',
   },
   roles: {
-    staff: 'Mukozi',
-    pharmacist: 'Famasiti',
-    cashier: 'Kashiya',
-    nurse: 'Nnasi',
-    superAdministrator: 'Super Administrator',
+    staff: 'Omukozi',
+    pharmacist: 'Omusawo w\'Eddagala',
+    cashier: 'Omufunzi',
+    nurse: 'Omujulizi',
+    superAdministrator: 'Kakulira wa System',
   },
   staffPages: {
     performanceMetrics: "Ebikyusa by'ebikolwa byo birabika bulungi. Wano waliwo enkuŋŋaanya y'ebikolwa byo.",

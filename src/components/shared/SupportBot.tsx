@@ -58,7 +58,7 @@ export default function SupportBot({ open: openProp, onOpen, onClose }: SupportB
       }
     };
     fetchSettings();
-  });
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

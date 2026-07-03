@@ -38,7 +38,7 @@ export default function SuperAdminSidebar({ open = false, onClose }: SuperAdminS
     { name: t('superAdmin.pharmacyMap'),href: '/super-admin/map',             icon: MapPinIcon },
     { name: t('common.notifications'),  href: '/super-admin/notifications',   icon: BellIcon },
     { name: t('common.profile'),        href: '/super-admin/profile',         icon: UserCircleIcon },
-    { name: 'Settings',                 href: '/super-admin/settings',        icon: Cog6ToothIcon },
+    { name: t('superAdmin.settings'),                 href: '/super-admin/settings',        icon: Cog6ToothIcon },
   ];
 
   const handleLogout = () => {
