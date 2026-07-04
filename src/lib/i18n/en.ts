@@ -588,6 +588,7 @@ export const en = {
       weeklyReport: 'Weekly report ready',
     },
     pharmacyMap: 'Pharmacy Map',
+    settings: 'Settings',
   },
   branch: {
     portal: 'Branch Portal',

@@ -588,6 +588,7 @@ export const lg = {
       weeklyReport: 'Lipooti ey\'wiiki etegeereddwa',
     },
     pharmacyMap: 'Mapu y\'Obudaawa',
+    settings: 'Entegeka',
   },
   branch: {
     portal: 'Ensinzi y\'Ossannyalaze',

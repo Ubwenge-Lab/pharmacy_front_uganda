@@ -588,6 +588,7 @@ export const fr = {
       weeklyReport: 'Rapport hebdomadaire prêt',
     },
     pharmacyMap: 'Carte des pharmacies',
+    settings: 'Paramètres',
   },
   branch: {
     portal: 'Portail de l\'agence',
