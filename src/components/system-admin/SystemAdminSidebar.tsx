@@ -7,38 +7,29 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/context/AuthContext';
 import {
   Squares2X2Icon,
-  BuildingStorefrontIcon,
-  UserGroupIcon,
-  ChartBarIcon,
-  BellIcon,
-  UserCircleIcon,
-  XMarkIcon,
-  MapPinIcon,
-  ArrowRightOnRectangleIcon,
+  ShieldCheckIcon,
+  UsersIcon,
   Cog6ToothIcon,
+  XMarkIcon,
+  ArrowRightOnRectangleIcon,
 } from '@heroicons/react/24/outline';
 
-interface SuperAdminSidebarProps {
+interface SystemAdminSidebarProps {
   open?: boolean;
   onClose?: () => void;
-  onOpenSupport?: () => void;
 }
 
-export default function SuperAdminSidebar({ open = false, onClose }: SuperAdminSidebarProps) {
+export default function SystemAdminSidebar({ open = false, onClose }: SystemAdminSidebarProps) {
   const { t } = useTranslation();
   const pathname = usePathname();
   const router = useRouter();
   const { logout } = useAuth();
 
   const navigation = [
-    { name: t('superAdmin.dashboard'),  href: '/super-admin/dashboard',       icon: Squares2X2Icon },
-    { name: t('superAdmin.pharmacies'), href: '/super-admin/pharmacies',      icon: BuildingStorefrontIcon },
-    { name: t('superAdmin.patients'),   href: '/super-admin/patients',        icon: UserGroupIcon },
-    { name: t('superAdmin.analytics'),  href: '/super-admin/analytics',       icon: ChartBarIcon },
-    { name: t('superAdmin.pharmacyMap'),href: '/super-admin/map',             icon: MapPinIcon },
-    { name: t('common.notifications'),  href: '/super-admin/notifications',   icon: BellIcon },
-    { name: t('common.profile'),        href: '/super-admin/profile',         icon: UserCircleIcon },
-    { name: t('superAdmin.settings'),                 href: '/super-admin/settings',        icon: Cog6ToothIcon },
+    { name: 'Dashboard',  href: '/system-admin/dashboard',       icon: Squares2X2Icon },
+    { name: 'Audit Logs', href: '/system-admin/audit-logs',      icon: ShieldCheckIcon },
+    { name: 'User Management', href: '/system-admin/users',      icon: UsersIcon },
+    { name: 'Settings',   href: '/system-admin/settings',        icon: Cog6ToothIcon },
   ];
 
   const handleLogout = () => {
@@ -54,7 +45,7 @@ export default function SuperAdminSidebar({ open = false, onClose }: SuperAdminS
         ${open ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
         lg:translate-x-0 lg:min-h-screen lg:sticky lg:top-0 lg:self-start
       `}
-      style={{ backgroundColor: '#1E3A5F', color: '#CBD5E1' }}
+      style={{ backgroundColor: '#0F172A', color: '#CBD5E1' }}
     >
       {/* Brand header */}
       <div className="p-6 shrink-0">
@@ -71,7 +62,7 @@ export default function SuperAdminSidebar({ open = false, onClose }: SuperAdminS
             </div>
             <div>
               <h1 className="text-xl font-bold text-white">E-Vuze</h1>
-              <p className="text-xs" style={{ color: '#94A3B8' }}>{t('superAdmin.portal')}</p>
+              <p className="text-xs" style={{ color: '#94A3B8' }}>Engineer Portal</p>
             </div>
           </div>
           <button
@@ -94,7 +85,7 @@ export default function SuperAdminSidebar({ open = false, onClose }: SuperAdminS
                 <div
                   className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200"
                   style={isActive
-                    ? { background: 'linear-gradient(135deg, #0284C7, #38BDF8)', color: '#FFFFFF' }
+                    ? { background: 'linear-gradient(135deg, #10B981, #34D399)', color: '#FFFFFF' }
                     : { color: '#94A3B8' }
                   }
                   onMouseEnter={e => { if (!isActive) { (e.currentTarget as HTMLDivElement).style.backgroundColor = 'rgba(255,255,255,0.08)'; (e.currentTarget as HTMLDivElement).style.color = '#FFFFFF'; } }}

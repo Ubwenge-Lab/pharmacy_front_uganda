@@ -588,6 +588,7 @@ export const lg = {
       weeklyReport: 'Lipooti ey\'wiiki etegeereddwa',
     },
     pharmacyMap: 'Mapu y\'Obudaawa',
+    settings: 'Entegeka',
   },
   branch: {
     portal: 'Ensinzi y\'Ossannyalaze',
@@ -1485,6 +1486,7 @@ export const lg = {
     pharmacist: 'Omusawo w\'Eddagala',
     cashier: 'Omufunzi',
     nurse: 'Omujulizi',
+    superAdministrator: 'Kakulira wa System',
   },
   staffPages: {
     performanceMetrics: "Ebikyusa by'ebikolwa byo birabika bulungi. Wano waliwo enkuŋŋaanya y'ebikolwa byo.",

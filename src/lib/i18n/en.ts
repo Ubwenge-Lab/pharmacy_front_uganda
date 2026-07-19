@@ -588,6 +588,7 @@ export const en = {
       weeklyReport: 'Weekly report ready',
     },
     pharmacyMap: 'Pharmacy Map',
+    settings: 'Settings',
   },
   branch: {
     portal: 'Branch Portal',
@@ -1485,6 +1486,7 @@ export const en = {
     pharmacist: 'Pharmacist',
     cashier: 'Cashier',
     nurse: 'Nurse',
+    superAdministrator: 'Super Administrator',
   },
   staffPages: {
     performanceMetrics: "Your performance metrics are looking good. Here's an overview of your operations.",

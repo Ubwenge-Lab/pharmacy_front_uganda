@@ -1,5 +1,5 @@
 // src/lib/i18n/rw.ts
-export const rw = {
+/*export const rw = {
   common: {
     loading: 'Birategerezwa...',
     search: 'Shakisha',
@@ -1483,8 +1483,9 @@ export const rw = {
   roles: {
     staff: 'Umukozi',
     pharmacist: 'Umuganga w\'Imiti',
-    cashier: 'Kasiye',
+    cashier: 'Kashiya',
     nurse: 'Infirmiye',
+    superAdministrator: 'Admini',
   },
   staffPages: {
     performanceMetrics: "Ibipimo by'ibikorwa byawe ni byiza. Hari incamake y'ibikorwa byawe.",
@@ -1705,4 +1706,4 @@ export const rw = {
     all: 'Byose',
     open: 'Ifunguye',
   },
-};
+};*/

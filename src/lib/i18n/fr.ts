@@ -588,6 +588,7 @@ export const fr = {
       weeklyReport: 'Rapport hebdomadaire prêt',
     },
     pharmacyMap: 'Carte des pharmacies',
+    settings: 'Paramètres',
   },
   branch: {
     portal: 'Portail de l\'agence',
@@ -1485,6 +1486,7 @@ export const fr = {
     pharmacist: 'Pharmacien',
     cashier: 'Caissier',
     nurse: 'Infirmier',
+    superAdministrator: 'Super Administrateur',
   },
   staffPages: {
     performanceMetrics: "Vos indicateurs de performance sont bons. Voici un aperçu de vos opérations.",

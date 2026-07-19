@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { BellIcon, Bars3Icon, SunIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import LanguageSwitcher from '@/components/shared/LanguageSwitcher';
 import { useAuth } from '@/context/AuthContext';
+import { useUnreadNotifications } from '@/hooks/useUnreadNotifications';
+import Link from 'next/link';
 
 interface PharmacyTopbarProps {
   pharmacyName?: string;
@@ -13,6 +15,7 @@ interface PharmacyTopbarProps {
 export default function PharmacyTopbar({ onMenuClick }: PharmacyTopbarProps) {
   const { t } = useTranslation();
   const { user } = useAuth();
+  const { unreadCount } = useUnreadNotifications('pharmacy');
 
   const firstName = user?.profile?.firstName ?? '';
   const lastName  = user?.profile?.lastName  ?? '';
@@ -48,13 +51,17 @@ export default function PharmacyTopbar({ onMenuClick }: PharmacyTopbarProps) {
         </button>
 
         {/* Bell */}
-        <button className="relative p-2 rounded-full hover:bg-gray-100 transition-colors" aria-label="Notifications">
-          <BellIcon className="w-[18px] h-[18px] text-gray-600" />
-          <span
-            className="absolute top-1 right-1 w-2 h-2 rounded-full"
-            style={{ backgroundColor: '#EF4444' }}
-          />
-        </button>
+        <Link href="/pharmacy/notifications">
+          <button className="relative p-2 rounded-full hover:bg-gray-100 transition-colors" aria-label="Notifications">
+            <BellIcon className="w-[18px] h-[18px] text-gray-600" />
+            {unreadCount > 0 && (
+              <span
+                className="absolute top-1 right-1 w-2 h-2 rounded-full"
+                style={{ backgroundColor: '#EF4444' }}
+              />
+            )}
+          </button>
+        </Link>
 
         {/* User avatar + name */}
         <div className="flex items-center gap-2 cursor-pointer group">

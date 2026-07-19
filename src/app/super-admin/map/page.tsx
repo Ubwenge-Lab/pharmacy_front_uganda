@@ -24,8 +24,8 @@ const MapView = dynamic(() => import('@/components/map/MapView'), {
   loading: () => <MapSkeleton />,
 });
 
-// Uganda-wide: zoom out enough to see all provinces
-const Uganda_CENTER: [number, number] = [-1.9403, 29.8739];
+// Uganda-wide: zoom out enough to see all provinces (Kampala center)
+const Uganda_CENTER: [number, number] = [1.3733, 32.2903];
 const Uganda_ZOOM = 8;
 
 type FilterStatus = 'all' | 'open' | 'closed';
