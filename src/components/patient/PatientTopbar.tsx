@@ -8,6 +8,7 @@ import { useCart } from '@/context/CartContext';
 import { ShoppingCartIcon, BellIcon, ChevronDownIcon, Bars3Icon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import LanguageSwitcher from '@/components/shared/LanguageSwitcher';
+import { useUnreadNotifications } from '@/hooks/useUnreadNotifications';
 
 interface PatientTopbarProps {
   onMenuClick?: () => void;
@@ -20,6 +21,7 @@ export default function PatientTopbar({ onMenuClick }: PatientTopbarProps) {
   const router = useRouter();
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const { unreadCount } = useUnreadNotifications('patient');
 
   const cartCount = getItemCount();
 
@@ -54,6 +56,9 @@ export default function PatientTopbar({ onMenuClick }: PatientTopbarProps) {
       <Link href="/patient/notifications">
         <button className="relative focus:outline-none hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-full transition-colors" aria-label="Notifications">
           <BellIcon className="w-6 h-6 text-gray-600 dark:text-gray-300" />
+          {unreadCount > 0 && (
+            <span className="absolute top-1 right-1 w-2.5 h-2.5 rounded-full" style={{ backgroundColor: '#EF4444' }} />
+          )}
         </button>
       </Link>
 

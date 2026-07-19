@@ -2,6 +2,7 @@
 import { useTranslation } from 'react-i18next';
 import { BellIcon, UserIcon, Bars3Icon } from '@heroicons/react/24/outline';
 import LanguageSwitcher from '@/components/shared/LanguageSwitcher';
+import { useUnreadNotifications } from '@/hooks/useUnreadNotifications';
 
 interface Props {
   branchName?: string;
@@ -11,6 +12,7 @@ interface Props {
 
 export default function BranchTopbar({ branchName = 'Branch', pharmacyName = 'E-Vuze Pharmacy', onMenuClick }: Props) {
   const { t } = useTranslation();
+  const { unreadCount } = useUnreadNotifications('branch');
 
   return (
     <header className="sticky top-0 z-30 h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 lg:px-6">
@@ -33,6 +35,9 @@ export default function BranchTopbar({ branchName = 'Branch', pharmacyName = 'E-
 
         <button className="relative p-2 rounded-full hover:bg-gray-100" aria-label="Notifications">
           <BellIcon className="w-[18px] h-[18px] text-gray-600" />
+          {unreadCount > 0 && (
+            <span className="absolute top-1 right-1 w-2 h-2 rounded-full" style={{ backgroundColor: '#EF4444' }} />
+          )}
         </button>
 
         <div className="flex items-center gap-2">

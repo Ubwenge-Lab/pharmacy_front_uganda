@@ -34,6 +34,7 @@ function fmt(n: number): string {
 
 // Build 6-month revenue trend from the total — visual approximation only
 function buildMonthlyRevenue(totalRevenue: number) {
+  if (!totalRevenue || totalRevenue === 0) return [];
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
   const weights = [0.55, 0.68, 0.80, 0.95, 1.25, 1.55];
   const base = totalRevenue / weights.reduce((a, b) => a + b, 0);
@@ -46,6 +47,7 @@ function buildMonthlyRevenue(totalRevenue: number) {
 
 // Build week-over-week avg order value — visual approximation
 function buildWeeklyAvg(totalRevenue: number, totalOrders: number) {
+  if (!totalOrders || totalOrders === 0) return [];
   const avg = totalOrders > 0 ? totalRevenue / totalOrders : 0;
   const mult = [1.4, 1.75, 0.45, 1.25, 0.9];
   return ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5'].map((w, i) => ({
@@ -127,7 +129,7 @@ export default function SuperAdminAnalyticsPage() {
   const pending    = (analytics?.totalOrders ?? 0) - completed;
   
   const donutData = (analytics?.totalOrders ?? 0) === 0 ? [
-    { name: 'No Orders', value: 1, color: '#e5e7eb' }
+    { name: 'No Transactions', value: 1, color: '#e5e7eb' }
   ] : [
     { name: 'Completed', value: completed, color: '#1E3A5F' },
     { name: 'Pending',   value: pending, color: '#38BDF8' },
@@ -229,31 +231,37 @@ export default function SuperAdminAnalyticsPage() {
           <h3 className="text-sm font-bold text-center mb-4" style={{ color: '#0284C7' }}>
             Revenue Over View
           </h3>
-          <ResponsiveContainer width="100%" height={220}>
-            <AreaChart data={monthlyData} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
-              <defs>
-                <linearGradient id="totalGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%"  stopColor="#38BDF8" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="#38BDF8" stopOpacity={0.0} />
-                </linearGradient>
-                <linearGradient id="pharGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%"  stopColor="#0284C7" stopOpacity={0.2} />
-                  <stop offset="95%" stopColor="#0284C7" stopOpacity={0.0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-              <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
-              <YAxis
-                tickFormatter={v => `${fmt(v)}`}
-                tick={{ fontSize: 11, fill: '#9ca3af' }}
-                axisLine={false}
-                tickLine={false}
-              />
-              <Tooltip content={<ChartTooltip />} />
-              <Area type="monotone" dataKey="total"    name="Total"    stroke="#38BDF8" strokeWidth={2.5} fill="url(#totalGrad)" />
-              <Area type="monotone" dataKey="pharmacy" name="Pharmacy" stroke="#0284C7" strokeWidth={2}   fill="url(#pharGrad)"  />
-            </AreaChart>
-          </ResponsiveContainer>
+          {monthlyData.length > 0 ? (
+            <ResponsiveContainer width="100%" height={220}>
+              <AreaChart data={monthlyData} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="totalGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%"  stopColor="#38BDF8" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#38BDF8" stopOpacity={0.0} />
+                  </linearGradient>
+                  <linearGradient id="pharGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%"  stopColor="#0284C7" stopOpacity={0.2} />
+                    <stop offset="95%" stopColor="#0284C7" stopOpacity={0.0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
+                <YAxis
+                  tickFormatter={v => `${fmt(v)}`}
+                  tick={{ fontSize: 11, fill: '#9ca3af' }}
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <Tooltip content={<ChartTooltip />} />
+                <Area type="monotone" dataKey="total"    name="Total"    stroke="#38BDF8" strokeWidth={2.5} fill="url(#totalGrad)" />
+                <Area type="monotone" dataKey="pharmacy" name="Pharmacy" stroke="#0284C7" strokeWidth={2}   fill="url(#pharGrad)"  />
+              </AreaChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="flex items-center justify-center h-[220px] text-gray-400 text-sm font-medium">
+              No revenue data available
+            </div>
+          )}
         </div>
 
         {/* General Insights */}
@@ -342,32 +350,40 @@ export default function SuperAdminAnalyticsPage() {
           <h3 className="text-sm font-bold text-center mb-4" style={{ color: '#0284C7' }}>
             Average Order Value
           </h3>
-          <ResponsiveContainer width="100%" height={220}>
-            <LineChart data={weeklyData} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-              <XAxis dataKey="week" tick={{ fontSize: 11, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
-              <YAxis
-                tickFormatter={v => `${fmt(v)}`}
-                tick={{ fontSize: 11, fill: '#9ca3af' }}
-                axisLine={false}
-                tickLine={false}
-              />
-              <Tooltip
-                formatter={(v: any) => `UGX ${Number(v).toLocaleString()}`}
-                contentStyle={{ borderRadius: 12, border: '1px solid #f0f0f0', fontSize: 12 }}
-              />
-              <Line
-                type="monotone"
-                dataKey="value"
-                name="Avg Order"
-                stroke="#0284C7"
-                strokeWidth={2}
-                dot={{ r: 4, fill: '#0284C7', strokeWidth: 0 }}
-                activeDot={{ r: 6 }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-          <p className="text-center text-xs text-gray-400 mt-1">UGX</p>
+          {weeklyData.length > 0 ? (
+            <>
+              <ResponsiveContainer width="100%" height={220}>
+                <LineChart data={weeklyData} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                  <XAxis dataKey="week" tick={{ fontSize: 11, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
+                  <YAxis
+                    tickFormatter={v => `${fmt(v)}`}
+                    tick={{ fontSize: 11, fill: '#9ca3af' }}
+                    axisLine={false}
+                    tickLine={false}
+                  />
+                  <Tooltip
+                    formatter={(v: any) => `UGX ${Number(v).toLocaleString()}`}
+                    contentStyle={{ borderRadius: 12, border: '1px solid #f0f0f0', fontSize: 12 }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="value"
+                    name="Avg Order"
+                    stroke="#0284C7"
+                    strokeWidth={2}
+                    dot={{ r: 4, fill: '#0284C7', strokeWidth: 0 }}
+                    activeDot={{ r: 6 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+              <p className="text-center text-xs text-gray-400 mt-1">UGX</p>
+            </>
+          ) : (
+            <div className="flex items-center justify-center h-[220px] text-gray-400 text-sm font-medium">
+              No order data available
+            </div>
+          )}
         </div>
       </div>
 

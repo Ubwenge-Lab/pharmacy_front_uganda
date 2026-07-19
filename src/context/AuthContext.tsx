@@ -174,6 +174,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           router.push('/super-admin/dashboard');
           break;
 
+        case 'SYSTEM_ADMIN':
+          toast.success(t('auth2.welcomeAdmin') || 'Welcome System Admin');
+          router.push('/system-admin/dashboard');
+          break;
+
         case 'BRANCH_MANAGER':
           toast.success(t('auth2.welcomeBranchManager'));
           // If first login (temp password), redirect to change password

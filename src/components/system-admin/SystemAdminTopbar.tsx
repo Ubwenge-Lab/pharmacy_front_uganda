@@ -1,6 +1,3 @@
-// frontend/src/components/super-admin/SuperAdminTopbar.tsx
-// FIXED VERSION - Corrected CSS gradient classes
-
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
@@ -15,11 +12,11 @@ import {
 import LanguageSwitcher from '@/components/shared/LanguageSwitcher';
 import { useUnreadNotifications } from '@/hooks/useUnreadNotifications';
 
-interface SuperAdminTopbarProps {
+interface SystemAdminTopbarProps {
   onMenuClick?: () => void;
 }
 
-export default function SuperAdminTopbar({ onMenuClick }: SuperAdminTopbarProps) {
+export default function SystemAdminTopbar({ onMenuClick }: SystemAdminTopbarProps) {
   const { t } = useTranslation();
   const { user, logout } = useAuth();
   const router = useRouter();
@@ -28,7 +25,7 @@ export default function SuperAdminTopbar({ onMenuClick }: SuperAdminTopbarProps)
   const notifRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
 
-  const { notifications, unreadCount } = useUnreadNotifications('admin');
+  const { notifications, unreadCount } = useUnreadNotifications('admin'); // Reusing admin notifs for now
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -65,10 +62,10 @@ export default function SuperAdminTopbar({ onMenuClick }: SuperAdminTopbarProps)
         </button>
         <div>
           <h2 className="text-base lg:text-xl font-bold text-gray-900">
-            E-Vuze Healthcare Platform
+            E-Vuze Platform Health
           </h2>
           <p className="text-xs text-gray-500 hidden sm:block">
-            {t('superAdmin.topbar.subtitle')}
+            Engineer God's Eye Control
           </p>
         </div>
       </div>
@@ -136,14 +133,14 @@ export default function SuperAdminTopbar({ onMenuClick }: SuperAdminTopbarProps)
             >
             <div className="text-right hidden sm:block">
               <p className="text-sm font-semibold text-gray-900">
-                Super Admin
+                System Admin
               </p>
               <p className="text-xs text-gray-500">
-                {t('superAdmin.role')}
+                Engineer
               </p>
             </div>
-            <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold" style={{ backgroundColor: '#2563EB' }}>
-              SP
+            <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold" style={{ backgroundColor: '#10B981' }}>
+              SA
             </div>
           </button>
 
@@ -151,20 +148,9 @@ export default function SuperAdminTopbar({ onMenuClick }: SuperAdminTopbarProps)
             {showProfile && (
               <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-2xl border border-gray-200 py-2 z-50">
               <div className="px-4 py-3 border-b border-gray-200">
-                <p className="font-bold text-gray-900">Super Admin</p>
+                <p className="font-bold text-gray-900">System Admin</p>
                 <p className="text-sm text-gray-500">{user?.email}</p>
               </div>
-
-              <button
-                  onClick={() => {
-                    router.push('/super-admin/profile');
-                    setShowProfile(false);
-                  }}
-                  className="w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors flex items-center gap-3"
-                >
-                <UserCircleIcon className="w-5 h-5 text-gray-600" />
-                <span className="text-gray-900">{t('common.profile')}</span>
-              </button>
 
               <div className="border-t border-gray-200 mt-2 pt-2">
                 <button
