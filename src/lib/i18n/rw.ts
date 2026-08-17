@@ -1273,6 +1273,12 @@
     permissionCount: 'Inshingano {{count}}',
     resendConfirm: 'Ongera Ohereza amakuru yo kwinjira kuri {{email}}?',
     deleteConfirm: 'Siba {{name}}? Ibi ntibivuguruzwa.',
+    staffManagement: 'Gucunga Abakozi',
+    editPermissions: 'Hindura Uruhushya',
+    membersInBranch: 'abakozi mu ishami',
+    noPermissionsAssigned: 'Nta ruhushya rwatanzwe. Baza umuyobozi w\'ishami.',
+    noStaffFound: 'Nta mukozi wabonetse',
+    resetPassword: 'Subika Ijambobanga',
   },
   transfers: {
     stockTransfers: 'Guhereza Imiti',

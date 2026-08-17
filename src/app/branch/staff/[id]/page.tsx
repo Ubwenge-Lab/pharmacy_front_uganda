@@ -208,16 +208,16 @@ export default function StaffDetailPage() {
       {/* Hero */}
       <div className="rounded-2xl p-6 bg-[#EBF4FF] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center">
+          <div className="w-16 h-16 rounded-full bg-white/60 flex items-center justify-center">
             <UserCircleIcon className="w-8 h-8 text-[#29ABE2]" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-[#1E3A5F]">{staff.firstName} {staff.lastName}</h1>
             <div className="flex items-center gap-3 mt-1">
-              <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold bg-white/20 text-white`}>
+              <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#1E3A5F] text-white`}>
                 {staff.user.role}
               </span>
-              <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${staff.status === 'ACTIVE' ? 'bg-green-400/30 text-green-100' : 'bg-gray-400/30 text-gray-200'}`}>
+              <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${staff.status === 'ACTIVE' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'}`}>
                 {staff.status}
               </span>
             </div>

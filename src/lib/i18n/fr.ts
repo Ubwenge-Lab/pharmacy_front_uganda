@@ -1274,6 +1274,12 @@ export const fr = {
     permissionCount: '{{count}} permissions',
     resendConfirm: 'Renvoyer les identifiants de connexion à {{email}} ?',
     deleteConfirm: 'Supprimer {{name}} ? Cette action est irréversible.',
+    staffManagement: 'Gestion du personnel',
+    editPermissions: 'Modifier les permissions',
+    membersInBranch: 'membres dans votre succursale',
+    noPermissionsAssigned: 'Aucune permission attribuée. Contactez votre gérant de succursale.',
+    noStaffFound: 'Aucun membre du personnel trouvé',
+    resetPassword: 'Réinitialiser le mot de passe',
   },
   transfers: {
     stockTransfers: 'Transferts de stock',

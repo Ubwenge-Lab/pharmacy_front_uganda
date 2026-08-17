@@ -1274,6 +1274,12 @@ export const lg = {
     permissionCount: 'Emirimu {{count}}',
     resendConfirm: 'Ddamu otumire amakuuma g\'okuyingira ku {{email}}?',
     deleteConfirm: 'Sazaamu {{name}}? Kino tekikyusibwa.',
+    staffManagement: 'Okudukanya Abakozi',
+    editPermissions: 'Kyusa Obuyinza',
+    membersInBranch: 'abakozi mu ttabi lyammwe',
+    noPermissionsAssigned: 'Tewali buyinza buweereddwa. Tuuka ku maneja wo.',
+    noStaffFound: 'Tewali mukozi alabiddwa',
+    resetPassword: 'Ddamu Okuteeka Password',
   },
   transfers: {
     stockTransfers: 'Okuwaayo Eddagala',

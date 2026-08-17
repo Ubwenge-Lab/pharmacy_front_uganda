@@ -29,19 +29,21 @@ export default function BranchSidebar({ open = false, onClose, collapsed = false
   const isStaff = role === 'PHARMACIST' || role === 'CASHIER' || role === 'NURSE';
 
   const nav = [
-    // Everyone in the branch portal
+    // Dashboard first
+    { href: '/branch/dashboard',           icon: Squares2X2Icon,         label: t('branch.dashboard'), show: isManager },
+    // Counter tools — the whole branch team (CTO decision)
     { href: '/branch/pos',                 icon: ShoppingCartIcon,       label: 'POS Sale',            show: true },
     { href: '/branch/prescription-upload', icon: DocumentArrowUpIcon,    label: 'Upload Rx',           show: true },
     { href: '/branch/prescriptions',       icon: ClipboardDocumentCheckIcon, label: 'Rx Queue',       show: true },
-    { href: '/branch/change-password',     icon: LockClosedIcon,         label: t('branch.changePassword'), show: true },
     // Branch-manager-only administration
-    { href: '/branch/dashboard',           icon: Squares2X2Icon,         label: t('branch.dashboard'), show: isManager },
     { href: '/branch/staff',               icon: UsersIcon,              label: t('branch.staff'),     show: isManager },
     { href: '/branch/attendance',          icon: ClockIcon,              label: t('branch.attendance'), show: isManager },
     { href: '/branch/analytics',           icon: ChartBarIcon,           label: t('branch.analytics'), show: isManager },
     { href: '/branch/inventory',           icon: CubeIcon,               label: t('branch.inventory'), show: isManager },
     { href: '/branch/transfers',           icon: ArrowsRightLeftIcon,    label: t('branch.transfers'), show: isManager },
     { href: '/branch/map',                 icon: MapIcon,                label: t('branch.networkMap'), show: isManager },
+    // Account
+    { href: '/branch/change-password',     icon: LockClosedIcon,         label: t('branch.changePassword'), show: true },
   ].filter(item => item.show);
 
   const isActive = (href: string) => pathname === href || pathname.startsWith(href + '/');

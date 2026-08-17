@@ -1274,6 +1274,12 @@ export const en = {
     permissionCount: '{{count}} permissions',
     resendConfirm: 'Resend login credentials to {{email}}?',
     deleteConfirm: 'Delete {{name}}? This cannot be undone.',
+    staffManagement: 'Staff Management',
+    editPermissions: 'Edit Permissions',
+    membersInBranch: 'members in your branch',
+    noPermissionsAssigned: 'No permissions assigned yet. Contact your branch manager.',
+    noStaffFound: 'No staff members found',
+    resetPassword: 'Reset Password',
   },
   transfers: {
     stockTransfers: 'Stock Transfers',

@@ -84,7 +84,11 @@ export function middleware(request: NextRequest) {
 
 
   if (isBranchRoute) {
-    if (payload.role !== 'BRANCH_MANAGER') {
+    // Branch portal: counter tools (POS, Rx upload, Rx queue) are for the whole
+    // branch team — BRANCH_MANAGER, PHARMACIST, CASHIER, NURSE (CTO decision).
+    // Must mirror BRANCH_PORTAL_ROLES in src/app/branch/layout.tsx.
+    const branchRoles = ['BRANCH_MANAGER', 'PHARMACIST', 'CASHIER', 'NURSE'];
+    if (!branchRoles.includes(payload.role || '')) {
       return NextResponse.redirect(new URL('/', request.url));
     }
     return NextResponse.next();
