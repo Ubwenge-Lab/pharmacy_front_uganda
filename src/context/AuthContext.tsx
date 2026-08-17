@@ -107,8 +107,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           const { accessToken, refreshToken: newRefreshToken } = data;
           setAuthTokens(accessToken, newRefreshToken || getRefreshToken() || '');
         }
-      } catch (err) {
-        console.error('Silent session refresh failed:', err);
+      } catch (err: any) {
+        const status = err?.response?.status;
+        if (status === 401 || status === 403) {
+          // Refresh token is invalid/expired — the session is dead. Clear the
+          // auth state once and let the guard redirect to /login. Do NOT keep
+          // retrying on every activity (that spams 401s in the console).
+          console.warn('Session expired — clearing auth state.');
+          removeAuthTokens();
+          clearUserCache();
+          setUser(null);
+          if (window.location.pathname !== '/login') {
+            toast.error(t('auth2.sessionExpired', 'Session expired. Please log in again.'));
+            router.push('/login');
+          }
+          return;
+        }
+        // Transient failure (timeout/network) — keep the session, retry on next activity
+        console.warn('Silent session refresh skipped (transient):', err?.message ?? err);
       }
     };
 

@@ -28,11 +28,22 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response interceptor - Handle token refresh
+// Response interceptor - Handle token refresh + timeout resilience
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
+
+    // Resilience: retry idempotent GETs once on network timeout (flaky
+    // laptop→Supabase-pooler path). GETs are safe to replay.
+    if (
+      error.code === 'ECONNABORTED' &&
+      error.config?.method?.toLowerCase() === 'get' &&
+      !originalRequest._timeoutRetry
+    ) {
+      originalRequest._timeoutRetry = true;
+      return api(originalRequest);
+    }
 
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;

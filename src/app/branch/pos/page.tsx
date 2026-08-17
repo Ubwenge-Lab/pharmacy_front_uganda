@@ -10,6 +10,7 @@
 import { useCallback, useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import api from '@/lib/api';
+import CounterModeExit from '@/components/branch/CounterModeExit';
 import { useFetch } from '@/hooks/useFetch';
 import toast from 'react-hot-toast';
 import { getErrorMessage } from '@/lib/errorHandler';
@@ -681,6 +682,7 @@ export default function POSPage() {
           </div>
         </div>
       )}
+      <CounterModeExit />
     </div>
   );
 }

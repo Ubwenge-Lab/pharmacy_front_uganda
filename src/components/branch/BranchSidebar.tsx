@@ -56,7 +56,7 @@ export default function BranchSidebar({ open = false, onClose, collapsed = false
       <div className={`py-7 border-b border-white/10 flex items-center justify-between shrink-0 ${collapsed ? 'lg:flex-col lg:gap-3 lg:px-0 lg:justify-center' : 'px-6'}`}>
         <div className={collapsed ? 'lg:hidden' : ''}>
           <p className="text-white text-2xl font-bold tracking-tight">E-Vuze</p>
-          <p className="text-white/60 text-sm mt-0.5">{isStaff ? 'Counter' : t('branch.portal')}</p>
+          <p className="text-white/60 text-sm mt-0.5">{isStaff ? t('branch.counter') : t('branch.portal')}</p>
         </div>
         {collapsed && (
           <div className="hidden lg:flex w-9 h-9 rounded-full bg-white shadow-md items-center justify-center overflow-hidden shrink-0">
@@ -98,8 +98,19 @@ export default function BranchSidebar({ open = false, onClose, collapsed = false
         })}
       </nav>
 
-      {/* Footer — just logout */}
-      <div className={`pb-5 shrink-0 ${collapsed ? 'lg:px-2.5' : 'px-4'}`}>
+      {/* Footer — staff: exit counter mode back to the staff portal; logout for everyone */}
+      <div className={`pb-5 shrink-0 space-y-1 ${collapsed ? 'lg:px-2.5' : 'px-4'}`}>
+        {isStaff && (
+          <Link
+            href="/staff/dashboard"
+            onClick={onClose}
+            title={collapsed ? t('branch.exitCounter') : undefined}
+            className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl text-white/70 hover:text-white hover:bg-white/10 text-sm font-medium transition-all ${collapsed ? 'lg:justify-center lg:px-0' : ''}`}
+          >
+            <Squares2X2Icon className="w-[18px] h-[18px] shrink-0" />
+            <span className={collapsed ? 'lg:hidden' : ''}>{t('branch.exitCounter')}</span>
+          </Link>
+        )}
         <button
           onClick={logout}
           title={collapsed ? t('common.logout') : undefined}

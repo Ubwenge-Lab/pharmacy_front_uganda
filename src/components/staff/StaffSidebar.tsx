@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
-import { Squares2X2Icon, ClockIcon, LockClosedIcon, UserIcon, ArrowRightOnRectangleIcon, XMarkIcon, CubeIcon, ClipboardDocumentListIcon, ShieldExclamationIcon, CreditCardIcon, ShoppingCartIcon, DocumentArrowUpIcon, ClipboardDocumentCheckIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon } from '@heroicons/react/24/outline';
+import { Squares2X2Icon, ClockIcon, LockClosedIcon, UserIcon, ArrowRightOnRectangleIcon, XMarkIcon, CubeIcon, ClipboardDocumentListIcon, ShieldExclamationIcon, CreditCardIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon } from '@heroicons/react/24/outline';
 import { isPatientEnabled } from '@/lib/features';
 import { useAuth } from '@/context/AuthContext';
 import { useStaffPermissions } from '@/hooks/useStaffPermissions';
@@ -25,10 +25,8 @@ export default function StaffSidebar({ open = false, onClose, collapsed = false,
 
   const nav = [
     { href: '/staff/dashboard',       icon: Squares2X2Icon,            label: t('staff.dashboard'),      show: true },
-    // Counter tools (client demands) live in the branch portal — surfaced here for staff roles
-    { href: '/branch/pos',            icon: ShoppingCartIcon,          label: 'POS Sale',                 show: true },
-    { href: '/branch/prescription-upload', icon: DocumentArrowUpIcon,  label: 'Upload Rx',               show: !isCashier },
-    { href: '/branch/prescriptions',  icon: ClipboardDocumentCheckIcon,label: 'Rx Queue',                show: !isCashier },
+    // Counter tools (POS, Rx upload, Rx queue) live in the Counter workspace —
+    // reached via the WorkspaceSwitcher in the topbar (no duplication).
     { href: '/staff/orders',          icon: CreditCardIcon,            label: t('cashier.paymentsNav'),  show: isCashier && (can('VIEW_PAYMENTS') || can('PROCESS_PAYMENTS')) },
     { href: '/staff/prescriptions',   icon: ClipboardDocumentListIcon, label: t('staff.prescriptions'),  show: !isCashier && can('VIEW_PRESCRIPTIONS') },
     { href: '/staff/inventory',       icon: CubeIcon,                  label: t('staff.inventory'),      show: can('VIEW_INVENTORY') },

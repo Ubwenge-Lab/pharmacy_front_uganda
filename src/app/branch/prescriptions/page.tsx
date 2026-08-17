@@ -11,6 +11,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import api from '@/lib/api';
+import CounterModeExit from '@/components/branch/CounterModeExit';
 import toast from 'react-hot-toast';
 import { getErrorMessage } from '@/lib/errorHandler';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
@@ -370,6 +371,7 @@ export default function PrescriptionQueuePage() {
           ))}
         </div>
       )}
+      <CounterModeExit />
     </div>
   );
 }
