@@ -3,12 +3,14 @@
 import { useState } from 'react';
 import HospitalSidebar from '@/components/hospital/HospitalSidebar';
 import HospitalTopbar from '@/components/hospital/HospitalTopbar';
+import { useSidebarCollapsed } from '@/hooks/useSidebarCollapsed';
 import { MOCK_DOCTOR } from '@/mock/hospital/user';
 
 // TODO: replace MOCK_DOCTOR with useAuth() once hospital login is configured
 
 export default function HospitalDoctorLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { collapsed, toggle: toggleCollapsed } = useSidebarCollapsed();
 
   const userName = `${MOCK_DOCTOR.firstName} ${MOCK_DOCTOR.lastName}`;
 
@@ -24,8 +26,10 @@ export default function HospitalDoctorLayout({ children }: { children: React.Rea
         portalType="doctor"
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
+        collapsed={collapsed}
+        onToggleCollapsed={toggleCollapsed}
       />
-      <div className="flex-1 lg:ml-64 min-w-0">
+      <div className={`flex-1 min-w-0 transition-all duration-300 ${collapsed ? 'lg:ml-20' : 'lg:ml-64'}`}>
         <HospitalTopbar
           userName={userName}
           roleLabel={MOCK_DOCTOR.specialisation}

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
+import { useSidebarCollapsed } from '@/hooks/useSidebarCollapsed';
 import StaffSidebar from '@/components/staff/StaffSidebar';
 import StaffTopbar from '@/components/staff/Stafftopbar';
 import SupportBot from '@/components/shared/SupportBot';
@@ -17,6 +18,7 @@ export default function StaffLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [supportOpen, setSupportOpen] = useState(false);
+  const { collapsed, toggle: toggleCollapsed } = useSidebarCollapsed();
 
   useEffect(() => {
     if (loading) return;
@@ -49,6 +51,8 @@ export default function StaffLayout({ children }: { children: React.ReactNode })
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
         onOpenSupport={() => setSupportOpen(true)}
+        collapsed={collapsed}
+        onToggleCollapsed={toggleCollapsed}
       />
 
       <SupportBot
@@ -56,7 +60,7 @@ export default function StaffLayout({ children }: { children: React.ReactNode })
         onOpen={() => setSupportOpen(true)}
         onClose={() => setSupportOpen(false)}
       />
-      <div className="flex-1 lg:ml-64 min-w-0">
+      <div className={`flex-1 min-w-0 transition-all duration-300 ${collapsed ? 'lg:ml-20' : 'lg:ml-64'}`}>
         <StaffTopbar onMenuClick={() => setSidebarOpen(true)} />
         <main className="p-4 lg:p-6">{children}</main>
       </div>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
+import { useSidebarCollapsed } from '@/hooks/useSidebarCollapsed';
 import PharmacySidebar from '@/components/pharmacy/PharmacySidebar';
 import PharmacyTopbar from '@/components/pharmacy/PharmacyTopbar';
 import SupportBot from '@/components/shared/SupportBot';
@@ -13,6 +14,7 @@ export default function PharmacyLayout({ children }: { children: React.ReactNode
   const router = useRouter();
   const [supportOpen, setSupportOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { collapsed, toggle: toggleCollapsed } = useSidebarCollapsed();
 
   useEffect(() => {
     if (loading) return;
@@ -45,6 +47,8 @@ export default function PharmacyLayout({ children }: { children: React.ReactNode
         onOpenSupport={() => setSupportOpen(true)}
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
+        collapsed={collapsed}
+        onToggleCollapsed={toggleCollapsed}
       />
 
       <SupportBot
@@ -53,7 +57,7 @@ export default function PharmacyLayout({ children }: { children: React.ReactNode
         onClose={() => setSupportOpen(false)}
       />
 
-      <div className="flex-1 flex flex-col lg:ml-72 min-w-0">
+      <div className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${collapsed ? 'lg:ml-20' : 'lg:ml-72'}`}>
         <PharmacyTopbar onMenuClick={() => setSidebarOpen(true)} />
         <main className="flex-1 p-4 lg:p-8 overflow-auto">
           <div className="max-w-7xl mx-auto">

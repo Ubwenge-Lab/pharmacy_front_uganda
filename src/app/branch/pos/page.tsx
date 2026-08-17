@@ -24,6 +24,9 @@ import {
   CheckCircleIcon,
   BanknotesIcon,
   ArrowPathIcon,
+  QrCodeIcon,
+  HashtagIcon,
+  XMarkIcon,
 } from '@heroicons/react/24/outline';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -46,6 +49,7 @@ type PaymentMethod = 'CASH' | 'MTN_MOMO' | 'AIRTEL_MONEY' | 'CARD' | 'INSURANCE'
 
 interface Receipt {
   receiptNumber: string;
+  receiptType?: string;
   date: string;
   pharmacy: { name: string; address: string; phone: string };
   customer: { name: string; phone: string };
@@ -53,6 +57,8 @@ interface Receipt {
   subtotal: number;
   discount: number;
   total: number;
+  taxRate?: number;
+  taxAmount?: number;
   paymentMethod: string;
   amountReceived: number;
   change: number;
@@ -60,6 +66,7 @@ interface Receipt {
 
 interface DailySummary {
   date: string;
+  branchId?: string;
   totalRevenue: number;
   totalTransactions: number;
   totalItemsSold: number;
@@ -112,6 +119,15 @@ export default function POSPage() {
   const [processing, setProcessing] = useState(false);
   const [receipt, setReceipt] = useState<Receipt | null>(null);
 
+  // Scan Rx (prescription QR / ID) + branch QR
+  const [prescriptionId, setPrescriptionId] = useState<string | null>(null);
+  const [scanModal, setScanModal] = useState(false);
+  const [scanInput, setScanInput] = useState('');
+  const [scanning, setScanning] = useState(false);
+  const [qrModal, setQrModal] = useState(false);
+  const [qrData, setQrData] = useState<{ deepLink: string; qrDataUrl: string; branchName: string } | null>(null);
+  const [qrLoading, setQrLoading] = useState(false);
+
   const medications = meds ?? [];
   const filtered = medications.filter(m =>
     m.quantity > 0 &&
@@ -163,6 +179,67 @@ export default function POSPage() {
     setPatientPhone('');
     setNotes('');
     setReceipt(null);
+    setPrescriptionId(null);
+  };
+
+  // ── Scan Rx: verify a prescription (by ID or QR payload) and prefill the cart ──
+
+  const handleScanRx = async () => {
+    const input = scanInput.trim();
+    if (!input) { toast.error('Paste the prescription ID or QR payload'); return; }
+    setScanning(true);
+    try {
+      const res = await api.post('/prescriptions/verify', { qrCodePayload: input });
+      const rx = res.data;
+      if (rx.status !== 'APPROVED') {
+        toast.error(`Prescription is ${rx.status} — only APPROVED prescriptions can be dispensed`);
+        return;
+      }
+      const meds = (rx.prescriptionMedications ?? [])
+        .filter((m: any) => m.matchedMedication)
+        .map((m: any) => ({
+          medication: {
+            id: m.matchedMedication.id,
+            name: m.matchedMedication.name,
+            category: '',
+            price: Number(m.matchedMedication.price),
+            quantity: m.matchedMedication.quantity,
+            requiresPrescription: true,
+          },
+          qty: m.quantity,
+        }));
+      if (meds.length === 0) {
+        toast.error('No matched medications on this prescription');
+        return;
+      }
+      setCart(meds);
+      setPrescriptionId(rx.id);
+      setScanModal(false);
+      setScanInput('');
+      toast.success(`Prescription ${rx.id.slice(0, 8)}… loaded (${meds.length} item(s))`);
+    } catch (e) {
+      toast.error(getErrorMessage(e));
+    } finally {
+      setScanning(false);
+    }
+  };
+
+  // ── Branch QR: patient scans to open this branch in the portal ────────────
+
+  const handleShowQr = async () => {
+    setQrModal(true);
+    if (qrData) return;
+    setQrLoading(true);
+    try {
+      const branchId = summary?.branchId;
+      if (!branchId) { toast.error('Branch not resolved — check the daily summary'); return; }
+      const res = await api.get(`/branches/${branchId}/qr`);
+      setQrData(res.data);
+    } catch (e) {
+      toast.error(getErrorMessage(e));
+    } finally {
+      setQrLoading(false);
+    }
   };
 
   // ── Process sale ─────────────────────────────────────────────────────────
@@ -183,6 +260,7 @@ export default function POSPage() {
         discount,
         patientName: patientName || undefined,
         patientPhone: patientPhone || undefined,
+        prescriptionId: prescriptionId || undefined,
         notes: notes || undefined,
       });
       setReceipt(res.data.receipt);
@@ -202,14 +280,16 @@ export default function POSPage() {
     w.document.write(`
       <html><head><title>Receipt</title>
       <style>
-        body { font-family: monospace; font-size: 13px; padding: 16px; max-width: 380px; }
-        h2 { text-align: center; margin: 0 0 4px; font-size: 16px; }
+        @page { size: 80mm auto; margin: 4mm; }
+        body { font-family: monospace; font-size: 12px; padding: 8px; max-width: 72mm; margin: 0 auto; }
+        h2 { text-align: center; margin: 0 0 4px; font-size: 15px; }
         .center { text-align: center; }
         table { width: 100%; border-collapse: collapse; }
         td, th { padding: 2px 4px; }
         .right { text-align: right; }
-        hr { border: none; border-top: 1px dashed #000; margin: 8px 0; }
-        .total { font-weight: bold; font-size: 15px; }
+        hr { border: none; border-top: 1px dashed #000; margin: 6px 0; }
+        .total { font-weight: bold; font-size: 14px; }
+        .muted { font-size: 11px; }
       </style>
       </head><body>
       ${receiptRef.current.innerHTML}
@@ -238,7 +318,10 @@ export default function POSPage() {
           <p className="text-center text-xs text-gray-500">{receipt.pharmacy.address}</p>
           <p className="text-center text-xs text-gray-500">{receipt.pharmacy.phone}</p>
           <hr className="my-3 border-dashed" />
-          <div className="text-xs text-gray-600 mb-1">Receipt: <b>{receipt.receiptNumber}</b></div>
+          <div className="text-xs text-gray-600 mb-1 flex justify-between">
+            <span>Receipt: <b>{receipt.receiptNumber}</b></span>
+            <span className="font-bold text-brand-teal">WALK-IN POS</span>
+          </div>
           <div className="text-xs text-gray-600 mb-1">Date: {new Date(receipt.date).toLocaleString()}</div>
           {receipt.customer.name && receipt.customer.name !== 'Walk-in Customer' && (
             <div className="text-xs text-gray-600">Customer: {receipt.customer.name} {receipt.customer.phone}</div>
@@ -270,6 +353,11 @@ export default function POSPage() {
             <div className="flex justify-between text-green-700"><span>Discount</span><span>-{receipt.discount.toLocaleString()}</span></div>
           )}
           <div className="flex justify-between font-bold text-base mt-1"><span>TOTAL</span><span>{receipt.total.toLocaleString()} UGX</span></div>
+          {(receipt.taxAmount ?? 0) > 0 && (
+            <div className="flex justify-between text-xs text-gray-500">
+              <span>incl. Tax ({(receipt.taxRate ?? 0) * 100}%)</span><span>{receipt.taxAmount!.toLocaleString()}</span>
+            </div>
+          )}
           <div className="flex justify-between mt-1"><span>Payment</span><span>{PM_LABELS[receipt.paymentMethod as PaymentMethod] ?? receipt.paymentMethod}</span></div>
           <div className="flex justify-between"><span>Received</span><span>{receipt.amountReceived.toLocaleString()}</span></div>
           {receipt.change > 0 && (
@@ -301,13 +389,34 @@ export default function POSPage() {
       {/* Left: Inventory search */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Header + summary */}
-        <div className="mb-4">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Point of Sale</h1>
-          {summary && (
-            <p className="text-sm text-gray-500 mt-1">
-              Today: <b>{summary.totalTransactions}</b> sales · <b>{summary.totalRevenue.toLocaleString()} UGX</b>
-            </p>
-          )}
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Point of Sale</h1>
+            {summary && (
+              <p className="text-sm text-gray-500 mt-1">
+                Today: <b>{summary.totalTransactions}</b> sales · <b>{summary.totalRevenue.toLocaleString()} UGX</b>
+              </p>
+            )}
+          </div>
+          <div className="flex gap-2">
+            {prescriptionId && (
+              <span className="text-xs bg-teal-100 text-teal-700 px-2.5 py-1.5 rounded-full flex items-center gap-1">
+                Rx {prescriptionId.slice(0, 8)}… <button onClick={() => setPrescriptionId(null)}><XMarkIcon className="w-3.5 h-3.5" /></button>
+              </span>
+            )}
+            <button
+              onClick={() => setScanModal(true)}
+              className="text-xs font-medium px-3 py-2 rounded-lg border border-brand-teal text-brand-teal hover:bg-brand-teal/10 flex items-center gap-1.5"
+            >
+              <HashtagIcon className="w-4 h-4" /> Scan Rx
+            </button>
+            <button
+              onClick={handleShowQr}
+              className="text-xs font-medium px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-300 hover:border-brand-teal hover:text-brand-teal flex items-center gap-1.5"
+            >
+              <QrCodeIcon className="w-4 h-4" /> Branch QR
+            </button>
+          </div>
         </div>
 
         {/* Search */}
@@ -511,6 +620,67 @@ export default function POSPage() {
           </button>
         </div>
       </div>
+
+      {/* Scan Rx modal */}
+      {scanModal && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" onClick={() => setScanModal(false)}>
+          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 w-full max-w-md" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                <HashtagIcon className="w-5 h-5 text-brand-teal" /> Scan Prescription
+              </h2>
+              <button onClick={() => setScanModal(false)} className="text-gray-400 hover:text-gray-600"><XMarkIcon className="w-5 h-5" /></button>
+            </div>
+            <p className="text-xs text-gray-500 mb-3">
+              Paste the prescription ID or the scanned QR payload. Only APPROVED prescriptions can be dispensed.
+            </p>
+            <textarea
+              rows={3}
+              value={scanInput}
+              onChange={e => setScanInput(e.target.value)}
+              placeholder='{"id":"…","hash":"…"} or prescription id'
+              className="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-brand-teal"
+            />
+            <button
+              onClick={handleScanRx}
+              disabled={scanning}
+              className="mt-4 w-full py-3 rounded-xl bg-brand-teal hover:bg-brand-teal/90 text-white font-semibold text-sm disabled:opacity-50 flex items-center justify-center gap-2"
+            >
+              {scanning ? <ArrowPathIcon className="w-5 h-5 animate-spin" /> : <HashtagIcon className="w-5 h-5" />}
+              Load into Cart
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Branch QR modal */}
+      {qrModal && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" onClick={() => setQrModal(false)}>
+          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 w-full max-w-sm text-center" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                <QrCodeIcon className="w-5 h-5 text-brand-teal" /> Branch QR
+              </h2>
+              <button onClick={() => setQrModal(false)} className="text-gray-400 hover:text-gray-600"><XMarkIcon className="w-5 h-5" /></button>
+            </div>
+            {qrLoading ? (
+              <div className="flex justify-center py-10"><LoadingSpinner /></div>
+            ) : qrData ? (
+              <>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={qrData.qrDataUrl} alt="Branch QR" className="mx-auto w-48 h-48 rounded-xl border border-gray-200" />
+                <p className="text-sm font-medium text-gray-800 dark:text-white mt-3">{qrData.branchName}</p>
+                <p className="text-xs text-gray-400 mt-1 break-all">{qrData.deepLink}</p>
+                <p className="text-xs text-gray-500 mt-2">
+                  Patient scans to open this branch and order — print it and place it at the counter.
+                </p>
+              </>
+            ) : (
+              <p className="text-sm text-gray-400 py-8">Could not load the QR code.</p>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

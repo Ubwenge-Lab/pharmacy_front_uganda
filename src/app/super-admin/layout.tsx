@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
+import { useSidebarCollapsed } from '@/hooks/useSidebarCollapsed';
 import SuperAdminSidebar from '@/components/super-admin/SuperAdminSidebar';
 import SuperAdminTopbar from '@/components/super-admin/SuperAdminTopbar';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
@@ -13,6 +14,7 @@ export default function SuperAdminLayout({ children }: { children: React.ReactNo
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [supportOpen, setSupportOpen] = useState(false);
+  const { collapsed, toggle: toggleCollapsed } = useSidebarCollapsed();
 
   useEffect(() => {
     if (!loading && (!user || user.role !== 'SUPER_ADMIN')) {
@@ -33,7 +35,7 @@ export default function SuperAdminLayout({ children }: { children: React.ReactNo
       {sidebarOpen && (
         <div className="fixed inset-0 bg-black/50 z-30 lg:hidden" onClick={() => setSidebarOpen(false)} />
       )}
-      <SuperAdminSidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} onOpenSupport={() => setSupportOpen(true)} />
+      <SuperAdminSidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} onOpenSupport={() => setSupportOpen(true)} collapsed={collapsed} onToggleCollapsed={toggleCollapsed} />
       <div className="flex-1 flex flex-col min-w-0">
         <SuperAdminTopbar onMenuClick={() => setSidebarOpen(true)} />
         <main className="flex-1 p-4 lg:p-6 overflow-auto">

@@ -57,6 +57,11 @@ export default function DirectPrescriptionUploadPage() {
   const [notes, setNotes] = useState('');
   const [result, setResult] = useState<PrescriptionResult | null>(null);
 
+  // Walk-in mode (no registered patient — client demand)
+  const [walkInMode, setWalkInMode] = useState(false);
+  const [walkInName, setWalkInName] = useState('');
+  const [walkInPhone, setWalkInPhone] = useState('');
+
   // ── Patient search ────────────────────────────────────────────────────────
 
   const searchPatients = useCallback(async (q: string) => {
@@ -114,7 +119,8 @@ export default function DirectPrescriptionUploadPage() {
 
   const handleSubmit = async () => {
     if (!file) { toast.error('Please select a prescription file'); return; }
-    if (!selectedPatient) { toast.error('Please select or identify a patient'); return; }
+    if (!selectedPatient && !walkInMode) { toast.error('Please select a patient or enable walk-in mode'); return; }
+    if (walkInMode && !walkInName.trim()) { toast.error('Please enter the patient name'); return; }
 
     setUploading(true);
     try {
@@ -126,12 +132,14 @@ export default function DirectPrescriptionUploadPage() {
       });
       const { url, fileName, fileType } = uploadRes.data;
 
-      // Step 2: Create prescription record on behalf of patient
+      // Step 2: Create prescription record on behalf of patient (or walk-in)
       const prescriptionRes = await api.post('/prescriptions/staff-direct-upload', {
         fileUrl: url,
         fileName,
         fileType,
-        patientId: selectedPatient.id,
+        patientId: selectedPatient?.id,
+        patientName: walkInMode ? walkInName.trim() : undefined,
+        patientPhone: walkInMode ? walkInPhone.trim() : undefined,
         notes: notes || undefined,
       });
 
@@ -152,6 +160,9 @@ export default function DirectPrescriptionUploadPage() {
     setResult(null);
     setPatientSearch('');
     setSearchResults([]);
+    setWalkInMode(false);
+    setWalkInName('');
+    setWalkInPhone('');
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
@@ -206,9 +217,37 @@ export default function DirectPrescriptionUploadPage() {
 
         {/* Patient selection */}
         <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-5">
-          <h2 className="font-semibold text-gray-800 dark:text-white mb-3">1. Select Patient</h2>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="font-semibold text-gray-800 dark:text-white">1. Select Patient</h2>
+            <button
+              onClick={() => { setWalkInMode(v => !v); setSelectedPatient(null); setPatientSearch(''); }}
+              className={`text-xs font-medium px-3 py-1.5 rounded-full border transition-colors ${walkInMode ? 'bg-brand-teal text-white border-brand-teal' : 'text-gray-500 border-gray-300 dark:border-gray-600 hover:border-brand-teal hover:text-brand-teal'}`}
+            >
+              {walkInMode ? 'Registered patient' : 'Walk-in patient'}
+            </button>
+          </div>
 
-          {selectedPatient ? (
+          {walkInMode ? (
+            <div className="space-y-3">
+              <input
+                type="text"
+                placeholder="Patient name (e.g., John Mugisha)"
+                value={walkInName}
+                onChange={e => setWalkInName(e.target.value)}
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-sm text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-teal"
+              />
+              <input
+                type="tel"
+                placeholder="Phone (e.g., 2567XXXXXXXX) — optional"
+                value={walkInPhone}
+                onChange={e => setWalkInPhone(e.target.value)}
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-sm text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-teal"
+              />
+              <p className="text-xs text-gray-400">
+                A guest patient record is created automatically — no registration needed.
+              </p>
+            </div>
+          ) : selectedPatient ? (
             <div className="flex items-center justify-between bg-brand-teal/10 border border-brand-teal/30 rounded-xl px-4 py-3">
               <div>
                 <p className="font-medium text-gray-800 dark:text-white">
@@ -321,7 +360,7 @@ export default function DirectPrescriptionUploadPage() {
         {/* Submit */}
         <button
           onClick={handleSubmit}
-          disabled={uploading || !file || !selectedPatient}
+          disabled={uploading || !file || (!selectedPatient && !walkInMode) || (walkInMode && !walkInName.trim())}
           className="w-full py-4 rounded-xl bg-brand-teal hover:bg-brand-teal/90 text-white font-semibold text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
           {uploading ? (
